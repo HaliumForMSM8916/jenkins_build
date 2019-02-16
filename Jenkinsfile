@@ -65,7 +65,7 @@ mka systemimage'''
     stage('Generate udev rules') {
       steps{
         ws('workspace/Halium-Build-Common') {
-          sh '''cat out/target/product/harpia/root/ueventd*.rc | grep ^/dev | sed -e 's/^\\/dev\\///' | awk '{printf "ACTION==\\"add\\", KERNEL==\\"%s\\", OWNER=\\"%s\\", GROUP=\\"%s\\", MODE=\\"%s\\"\\n",$1,$3,$4,$2}' | sed -e 's/\\r//' > 70-harpia.rules'''
+          sh '''cat out/target/product/harpia/root/ueventd*.rc | grep ^/dev | sed -e 's/^\\/dev\\///' | awk '{printf "ACTION==\\"add\\", KERNEL==\\"%s\\", OWNER=\\"%s\\", GROUP=\\"%s\\", MODE=\\"%s\\"\\n",$1,$3,$4,$2}' | sed -e 's/\\r//' > out/target/product/harpia/70-harpia.rules'''
         }
       }
     }
