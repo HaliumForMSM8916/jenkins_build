@@ -20,6 +20,9 @@ And also for debug/testing [halium-docs](https://docs.halium.org/en/latest/porti
 
 ### Plasma Mobile
 
+* RIL (1 of ~5 reboots works )
+* WIFI (Can't Find Driver)
+
 #### Working
 
 * SSH
