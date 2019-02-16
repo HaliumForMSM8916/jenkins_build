@@ -62,10 +62,17 @@ mka systemimage'''
         }
       }
     }
+    stage('Generate udev rules') {
+      steps{
+        ws('workspace/Halium-Build-Common') {
+          sh '''cat out/target/product/harpia/root/ueventd*.rc | grep ^/dev | sed -e 's/^\/dev\///' | awk '{printf "ACTION==\"add\", KERNEL==\"%s\", OWNER=\"%s\", GROUP=\"%s\", MODE=\"%s\"\n",$1,$3,$4,$2}' | sed -e 's/\r//' > 70-harpia.rules'''
+        }
+      }
+    }
     stage('Archive Artifacts') {
       steps {
         ws('workspace/Halium-Build-Common') {
-          archiveArtifacts(artifacts: 'out/target/product/harpia/*.img', excludes: 'android-ramdisk.img, dt.img, ramdisk-recovery.img, recovery.img')
+          archiveArtifacts(artifacts: 'out/target/product/harpia/*.img, out/target/product/harpia/70-harpia.rules', excludes: 'android-ramdisk.img, dt.img, ramdisk-recovery.img, recovery.img')
           cleanWs()
         }
       }
@@ -73,7 +80,7 @@ mka systemimage'''
     stage('Upload Release') {
       steps {
         dir(path: 'release') {
-          unarchive mapping: ['out/target/product/harpia/*.img' : '.']
+          unarchive mapping: ['out/target/product/harpia/*' : '.']
           sh '''GIT_TAG=$(date +%d-%m-%y-%H-%M-%S) && \\
           pwd && eval $(ssh-agent -s) && \\
           ssh-add ~/.ssh/git && \\
@@ -90,7 +97,7 @@ mka systemimage'''
     --name "Halium Harpia $GIT_TAG" \\
     --description "This is a test build for the harpia" \\
     --pre-release && \\
-          for a in $(cd out/target/product/harpia/ && ls -1 *.img); do github-release upload \\
+          for a in $(cd out/target/product/harpia/ && ls -1 *); do github-release upload \\
     --security-token $(cat ~/.github_api_key) \\
     --user HaliumForMSM8916 \\
     --repo jenkins_build \\
