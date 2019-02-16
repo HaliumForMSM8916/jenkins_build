@@ -26,16 +26,6 @@ JOBS=35 ./halium/devices/setup harpia --force-sync'''
         }
       }
     }
-/* Don't clean this time
-    stage('Clean Enviroment') {
-      steps {
-        ws('workspace/Halium-Build-Common') {
-          sh '''source build/envsetup.sh && \\
-breakfast harpia && \\
-mka clean'''
-        }
-      }
-    }*/
     stage('Build Mkbootimg') {
       steps {
         ws('workspace/Halium-Build-Common') {
@@ -76,6 +66,7 @@ mka systemimage'''
       steps {
         ws('workspace/Halium-Build-Common') {
           archiveArtifacts(artifacts: 'out/target/product/harpia/*.img', excludes: 'android-ramdisk.img, dt.img, ramdisk-recovery.img, recovery.img')
+          cleanWs()
         }
       }
     }
