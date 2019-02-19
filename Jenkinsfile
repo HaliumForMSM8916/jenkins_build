@@ -5,6 +5,11 @@ pipeline {
     }
   }
   stages {
+    stage('Notify Start') {
+      withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')]) {
+          sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s e'''
+      }
+    }
     stage('Repo Sync') {
       steps {
         ws('workspace/Halium-Build-Common') {
@@ -81,52 +86,57 @@ mka systemimage'''
       steps {
         dir(path: 'release') {
           unarchive mapping: ['out/target/product/harpia/*' : '.']
-          sh '''GIT_TAG=$(date +%d-%m-%y-%H-%M-%S) && \\
-          pwd && eval $(ssh-agent -s) && \\
-          ssh-add ~/.ssh/git && \\
-          git clone git@github.com:HaliumForMSM8916/jenkins_build.git jenkins_build && \\
-          cd jenkins_build && \\
-          git checkout harpia-hal && \\
-          git tag $GIT_TAG && git push --tags && \\
-          cd .. && rm -rf jenkins_build && \\
-          github-release release \\
-    --security-token $(cat ~/.github_api_key) \\
-    --user HaliumForMSM8916 \\
-    --repo jenkins_build \\
-    --tag $GIT_TAG \\
-    --name "Halium Harpia $GIT_TAG" \\
-    --description "This is a test build for the harpia, when installing from zip the root/phablet password is 123456789" \\
-    --pre-release && \\
-          for a in $(cd out/target/product/harpia/ && ls -1 *); do github-release upload \\
-    --security-token $(cat ~/.github_api_key) \\
-    --user HaliumForMSM8916 \\
-    --repo jenkins_build \\
-    --tag $GIT_TAG \\
-    --name $a \\
-    --file out/target/product/harpia/$a ; \\
-    md5sum out/target/product/harpia/$a >> sums.md5sum ; done
-    git clone git@github.com:HaliumForMSM8916/halium-zip.git halium-zip && \\
-    cd halium-zip && \\
-    wget -q --show-progress http://bshah.in/halium/halium-rootfs-20170630-151006.tar.gz -O rootfs.tar.gz && \\
-    ./halium-install -p reference -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
-    ZIP=$(ls -1 *.zip)
-    github-release upload \\
-    --security-token $(cat ~/.github_api_key) \\
-    --user HaliumForMSM8916 \\
-    --repo jenkins_build \\
-    --tag $GIT_TAG \\
-    --name $ZIP \\
-    --file $ZIP ; \\
-    md5sum $ZIP >> ../sums.md5sum && \\
-    cd ../ && \\
-    github-release upload \\
-    --security-token $(cat ~/.github_api_key) \\
-    --user HaliumForMSM8916 \\
-    --repo jenkins_build \\
-    --tag $GIT_TAG \\
-    --name sums.md5sum \\
-    --file sums.md5sum ; \\
-    '''
+          withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')],[string(credentialsId: 'GITHUB_API', variable: 'GIT_API_KEY')]) {
+            sh '''GIT_TAG=$(date +%d-%m-%y-%H-%M-%S) && \\
+            pwd && eval $(ssh-agent -s) && \\
+            ssh-add ~/.ssh/git && \\
+            git clone git@github.com:HaliumForMSM8916/jenkins_build.git jenkins_build && \\
+            cd jenkins_build && \\
+            git checkout harpia-hal && \\
+            git tag $GIT_TAG && git push --tags && \\
+            cd .. && rm -rf jenkins_build && \\
+            github-release release \\
+      --security-token $GIT_API_KEY \\
+      --user HaliumForMSM8916 \\
+      --repo jenkins_build \\
+      --tag $GIT_TAG \\
+      --name "Halium Harpia $GIT_TAG" \\
+      --description "This is a test build for the harpia, when installing from zip the root/phablet password is 123456789" \\
+      --pre-release && \\
+            for a in $(cd out/target/product/harpia/ && ls -1 *); do github-release upload \\
+      --security-token $GIT_API_KEY \\
+      --user HaliumForMSM8916 \\
+      --repo jenkins_build \\
+      --tag $GIT_TAG \\
+      --name $a \\
+      --file out/target/product/harpia/$a ; \\
+      md5sum out/target/product/harpia/$a >> sums.md5sum ; done
+      git clone git@github.com:HaliumForMSM8916/halium-zip.git halium-zip && \\
+      cd halium-zip && \\
+      wget -q --show-progress http://bshah.in/halium/halium-rootfs-20170630-151006.tar.gz -O rootfs.tar.gz && \\
+      ./halium-install -p reference -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
+      ZIP=$(ls -1 *.zip)
+      github-release upload \\
+      --security-token $GIT_API_KEY \\
+      --user HaliumForMSM8916 \\
+      --repo jenkins_build \\
+      --tag $GIT_TAG \\
+      --name $ZIP \\
+      --file $ZIP ; \\
+      md5sum $ZIP >> ../sums.md5sum && \\
+      cd ../ && \\
+      github-release upload \\
+      --security-token $GIT_API_KEY \\
+      --user HaliumForMSM8916 \\
+      --repo jenkins_build \\
+      --tag $GIT_TAG \\
+      --name sums.md5sum \\
+      --file sums.md5sum ; \\
+      RELEASE_URL=$(github-release info -u HaliumForMSM8916 -r jenkins_build -t $GIT_TAG -j | jq '.Releases[]|"\(.html_url)"'); \\
+      RELEASE_NAME=$(github-release info -u HaliumForMSM8916 -r jenkins_build -t $GIT_TAG -j | jq '.Releases[]|"\(.name)"'); \\
+      curl "https://api.telegram.org/bot${TG_BOT_API}/sendMessage" -d "{ \"chat_id\":\"-1001405063046\", \"text\":\"New Release ${RELEASE_NAME}: [gihub](${RELEASE_URL})\", \"parse_mode\":\"markdown\"}" -H "Content-Type: application/json" -s e
+      '''
+          }
           deleteDir()
         }
       }
