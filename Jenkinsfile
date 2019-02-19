@@ -21,7 +21,7 @@ repo sync -c -j35 --force-sync)'''
     stage('Get Harpia sources') {
       steps {
         ws('workspace/Halium-Build-Common') {
-          sh '''wget -O halium/devices/manifests/motorola_harpia.xml https://github.com/IkerST/manifest-halium/raw/master/motorola_harpia-hal.xml &&  \\
+          sh '''wget -O halium/devices/manifests/motorola_harpia.xml https://github.com/HaliumForMSM8916/manifest-halium/raw/master/motorola_harpia-hal.xml &&  \\
 JOBS=35 ./halium/devices/setup harpia --force-sync'''
         }
       }
