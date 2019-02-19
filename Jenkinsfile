@@ -6,8 +6,10 @@ pipeline {
   }
   stages {
     stage('Notify Start') {
-      withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')]) {
+      steps {
+        withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')]) {
           sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s e'''
+        }
       }
     }
     stage('Repo Sync') {
@@ -86,7 +88,7 @@ mka systemimage'''
       steps {
         dir(path: 'release') {
           unarchive mapping: ['out/target/product/harpia/*' : '.']
-          withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')],[string(credentialsId: 'GITHUB_API', variable: 'GIT_API_KEY')]) {
+          withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API') (credentialsId: 'GITHUB_API', variable: 'GIT_API_KEY')]) {
             sh '''GIT_TAG=$(date +%d-%m-%y-%H-%M-%S) && \\
             pwd && eval $(ssh-agent -s) && \\
             ssh-add ~/.ssh/git && \\
