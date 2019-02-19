@@ -8,7 +8,7 @@ pipeline {
     stage('Notify Start') {
       steps {
         withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')]) {
-          sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null'''
+          sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"UT Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null'''
         }
       }
     }
@@ -28,7 +28,7 @@ repo sync -c -j35 --force-sync)'''
     stage('Get Harpia sources') {
       steps {
         ws('workspace/Halium-Build-Common') {
-          sh '''wget -O halium/devices/manifests/motorola_harpia.xml https://github.com/HaliumForMSM8916/manifest-halium/raw/master/motorola_harpia-hal.xml &&  \\
+          sh '''wget -O halium/devices/manifests/motorola_harpia.xml https://github.com/HaliumForMSM8916/manifest-halium/raw/master/motorola_harpia-ut.xml &&  \\
 JOBS=35 ./halium/devices/setup harpia --force-sync'''
         }
       }
@@ -115,8 +115,8 @@ mka systemimage'''
       md5sum out/target/product/harpia/$a >> sums.md5sum ; done
       git clone git@github.com:HaliumForMSM8916/halium-zip.git halium-zip && \\
       cd halium-zip && \\
-      wget -q --show-progress http://bshah.in/halium/halium-rootfs-20170630-151006.tar.gz -O rootfs.tar.gz && \\
-      ./halium-install -p reference -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
+      wget -q --show-progress https://ci.ubports.com/job/xenial-rootfs-armhf/lastSuccessfulBuild/artifact/out/ubports-touch.rootfs-xenial-armhf.tar.gz -O rootfs.tar.gz && \\
+      ./halium-install -p ut -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
       ZIP=$(ls -1 *.zip)
       github-release upload \\
       --security-token $GIT_API_KEY \\
