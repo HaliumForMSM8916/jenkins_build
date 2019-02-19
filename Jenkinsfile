@@ -33,6 +33,15 @@ JOBS=35 ./halium/devices/setup harpia --force-sync'''
         }
       }
     }
+    stage('Experimental UT Patches') {
+      steps {
+        ws('workspace/Halium-Build-Common') {
+          sh '''(cd halium/libhybris/ && git remote add ubports https://github.com/ubports/libhybris.git && git fetch ubports && git checkout ubports/hybris-compat-layer-fixes) && \\
+          (cd halium/ && git clone https://github.com/ubports/platform-api.git && cd platform-api && git checkout xenial) && \\
+          (cd build && curl -L https://github.com/HaliumForMSM8916/jenkins_build/raw/harpia-ut-experimental/0001-UT-patch.patch | git am -  )'''
+        }
+      }
+    }
     stage('Build Mkbootimg') {
       steps {
         ws('workspace/Halium-Build-Common') {
