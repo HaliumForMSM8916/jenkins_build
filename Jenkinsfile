@@ -8,7 +8,7 @@ pipeline {
     stage('Notify Start') {
       steps {
         withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')]) {
-          sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null'''
+          sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"Plasma Mobile Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null'''
         }
       }
     }
@@ -28,7 +28,7 @@ repo sync -c -j35 --force-sync)'''
     stage('Get Harpia sources') {
       steps {
         ws('workspace/Halium-Build-Common') {
-          sh '''wget -O halium/devices/manifests/motorola_harpia.xml https://github.com/HaliumForMSM8916/manifest-halium/raw/master/motorola_harpia-hal.xml &&  \\
+          sh '''wget -O halium/devices/manifests/motorola_harpia.xml https://github.com/HaliumForMSM8916/manifest-halium/raw/master/motorola_harpia-pm.xml &&  \\
 JOBS=35 ./halium/devices/setup harpia --force-sync'''
         }
       }
@@ -102,7 +102,7 @@ mka systemimage'''
       --user HaliumForMSM8916 \\
       --repo jenkins_build \\
       --tag $GIT_TAG \\
-      --name "Halium Harpia $GIT_TAG" \\
+      --name "PM Harpia $GIT_TAG" \\
       --description "This is a test build for the harpia, when installing from zip the root/phablet password is 123456789" \\
       --pre-release && \\
             for a in $(cd out/target/product/harpia/ && ls -1 *); do github-release upload \\
@@ -115,8 +115,8 @@ mka systemimage'''
       md5sum out/target/product/harpia/$a >> sums.md5sum ; done
       git clone git@github.com:HaliumForMSM8916/halium-zip.git halium-zip && \\
       cd halium-zip && \\
-      wget -q --show-progress http://bshah.in/halium/halium-rootfs-20170630-151006.tar.gz -O rootfs.tar.gz && \\
-      ./halium-install -p reference -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
+      wget -q --show-progress https://images.plasma-mobile.org/edge-caf-rootfs/pm-rootfs-20190207-155347.tar.gz -O rootfs.tar.gz && \\
+      ./halium-install -p debian-pm-caf -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
       ZIP=$(ls -1 *.zip)
       github-release upload \\
       --security-token $GIT_API_KEY \\
