@@ -1,0 +1,29 @@
+From 0b8679a0b6ccc3225b4066d4940ffe2d011e864a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Iker=20Sand=C3=AD=20Trejo?= <ikersanditrejo@gmail.com>
+Date: Tue, 19 Feb 2019 12:59:27 -0600
+Subject: [PATCH] UT patch
+
+---
+ core/main.mk | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/core/main.mk b/core/main.mk
+index 76a87bbda..936b513cc 100644
+--- a/core/main.mk
++++ b/core/main.mk
+@@ -654,8 +654,10 @@ subdirs += \
+ # Specific projects for Halium
+ subdirs += \
+ 	halium/hybris-boot \
+-	halium/droidmedia \
+-	halium/halium-boot
++        halium/libhybris \
++        halium/platform-api/android/hybris \
++        halium/droidmedia \
++        halium/halium-boot
+ 
+ FULL_BUILD := true
+ 
+-- 
+2.20.1
+
