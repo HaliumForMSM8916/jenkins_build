@@ -17,10 +17,10 @@ index 76a87bbda..936b513cc 100644
  	halium/hybris-boot \
 -	halium/droidmedia \
 -	halium/halium-boot
-+        halium/libhybris \
-+        halium/platform-api/android/hybris \
-+        halium/droidmedia \
-+        halium/halium-boot
++	halium/libhybris \
++	halium/platform-api/android/hybris \
++	halium/droidmedia \
++	halium/halium-boot
  
  FULL_BUILD := true
  
