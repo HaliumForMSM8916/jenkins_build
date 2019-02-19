@@ -8,7 +8,7 @@ pipeline {
     stage('Notify Start') {
       steps {
         withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API')]) {
-          sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null'''
+          sh '''curl "https://api.telegram.org/bot"$TG_BOT_API"/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"Halium Build Started at: [jenkins](${BUILD_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null'''
         }
       }
     }
