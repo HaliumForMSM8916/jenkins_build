@@ -97,7 +97,10 @@ mka systemimage'''
       steps {
         dir(path: 'release') {
           unarchive mapping: ['out/target/product/harpia/*' : '.']
-          withCredentials([string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API') (credentialsId: 'GITHUB_API', variable: 'GIT_API_KEY')]) {
+          withCredentials([
+           string(credentialsId: 'TG_BOT_API', variable: 'TG_BOT_API'),
+           string(credentialsId: 'GITHUB_API', variable: 'GIT_API_KEY')
+          ]) {
             sh '''GIT_TAG=$(date +%d-%m-%y-%H-%M-%S) && \\
             pwd && eval $(ssh-agent -s) && \\
             ssh-add ~/.ssh/git && \\
