@@ -95,7 +95,7 @@ mka systemimage'''
     --repo jenkins_build \\
     --tag $GIT_TAG \\
     --name "Halium Harpia $GIT_TAG" \\
-    --description "This is a test build for the harpia" \\
+    --description "This is a test build for the harpia, when installing from zip the root/phablet password is 123456789" \\
     --pre-release && \\
           for a in $(cd out/target/product/harpia/ && ls -1 *); do github-release upload \\
     --security-token $(cat ~/.github_api_key) \\
@@ -103,7 +103,30 @@ mka systemimage'''
     --repo jenkins_build \\
     --tag $GIT_TAG \\
     --name $a \\
-    --file out/target/product/harpia/$a ; done'''
+    --file out/target/product/harpia/$a ; \\
+    md5sum out/target/product/harpia/$a >> sums.md5sum ; done
+    git clone git@github.com:HaliumForMSM8916/halium-zip.git halium-zip && \\
+    cd halium-zip && \\
+    wget -q --show-progress http://bshah.in/halium/halium-rootfs-20170630-151006.tar.gz -O rootfs.tar.gz && \\
+    ./halium-install -p reference -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
+    ZIP=$(ls -1 *.zip)
+    github-release upload \\
+    --security-token $(cat ~/.github_api_key) \\
+    --user HaliumForMSM8916 \\
+    --repo jenkins_build \\
+    --tag $GIT_TAG \\
+    --name $ZIP \\
+    --file $ZIP ; \\
+    md5sum $ZIP >> ../sums.md5sum && \\
+    cd ../ && \\
+    github-release upload \\
+    --security-token $(cat ~/.github_api_key) \\
+    --user HaliumForMSM8916 \\
+    --repo jenkins_build \\
+    --tag $GIT_TAG \\
+    --name sums.md5sum \\
+    --file sums.md5sum ; \\
+    '''
           deleteDir()
         }
       }
