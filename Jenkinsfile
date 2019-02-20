@@ -114,7 +114,7 @@ mka systemimage'''
       --user HaliumForMSM8916 \\
       --repo jenkins_build \\
       --tag $GIT_TAG \\
-      --name "Halium Harpia $GIT_TAG" \\
+      --name "UT Experimental Harpia $GIT_TAG" \\
       --description "This is a test build for the harpia, when installing from zip the root/phablet password is 123456789" \\
       --pre-release && \\
             for a in $(cd out/target/product/harpia/ && ls -1 *); do github-release upload \\
