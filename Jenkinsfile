@@ -149,7 +149,7 @@ mka systemimage'''
       --file sums.md5sum ; \\
       RELEASE_URL=$(github-release info -u HaliumForMSM8916 -r jenkins_build -t $GIT_TAG -j | jq -r '.Releases[]|"\\(.html_url)"'); \\
       RELEASE_NAME=$(github-release info -u HaliumForMSM8916 -r jenkins_build -t $GIT_TAG -j | jq -r '.Releases[]|"\\(.name)"'); \\
-      curl "https://api.telegram.org/bot${TG_BOT_API}/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"New Release ${RELEASE_NAME}: [gihub](${RELEASE_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null
+      curl "https://api.telegram.org/bot${TG_BOT_API}/sendMessage" -d "{ \\"chat_id\\":\\"-1001405063046\\", \\"text\\":\\"New Release ${RELEASE_NAME}: [github](${RELEASE_URL})\\", \\"parse_mode\\":\\"markdown\\"}" -H "Content-Type: application/json" -s > /dev/null
       '''
           }
           deleteDir()
