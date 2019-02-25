@@ -119,7 +119,7 @@ mka systemimage'''
       git clone git@github.com:HaliumForMSM8916/halium-zip.git halium-zip && \\
       cd halium-zip && \\
       wget -q --show-progress https://images.plasma-mobile.org/edge-caf-rootfs/pm-rootfs-20190207-155347.tar.gz -O rootfs.tar.gz && \\
-      ./halium-install -p debian-pm-caf -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
+      ./halium-install -p debian-pm-caf -u ../out/target/product/harpia/70-harpia.rules -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
       ZIP=$(ls -1 *.zip)
       github-release upload \\
       --security-token $GIT_API_KEY \\
