@@ -119,7 +119,7 @@ mka systemimage'''
       git clone git@github.com:HaliumForMSM8916/halium-zip.git halium-zip && \\
       cd halium-zip && \\
       wget -q --show-progress http://bshah.in/halium/halium-rootfs-20170630-151006.tar.gz -O rootfs.tar.gz && \\
-      ./halium-install -p reference -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
+      ./halium-install -p reference -u ../out/target/product/harpia/70-harpia.rules -n rootfs.tar.gz  ../out/target/product/harpia/system.img ../out/target/product/harpia/hybris-boot.img harpia && \\
       ZIP=$(ls -1 *.zip)
       github-release upload \\
       --security-token $GIT_API_KEY \\
